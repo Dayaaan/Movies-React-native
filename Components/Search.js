@@ -49,6 +49,10 @@ class Search extends React.Component {
         this.loadFilms();
     }
 
+    displayDetailForFilm = (id) => {
+        this.props.navigation.navigate("FilmDetail", { id });
+    }
+
     render() {
         console.log(this.state.isLoading);
         const { films, isLoading, page, totalPages } = this.state;
@@ -65,7 +69,7 @@ class Search extends React.Component {
                             this.loadFilms()
                         }
                     }}
-                    renderItem={({ item }) => <FilmItem film={item} /> }
+                    renderItem={({ item }) => <FilmItem film={item} displayDetailForFilm={this.displayDetailForFilm} /> }
                 />
                 {isLoading && (
                     <View style={styles.loading_container}>
@@ -79,7 +83,6 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
     main_container: {
-        marginTop: 20,
         flex: 1,
     },
     textInput: { 

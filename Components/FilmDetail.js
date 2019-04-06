@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Platform, View, Text, ScrollView, Image, TouchableOpacity, Share } from 'react-native';
 import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi';
 import favoriteBorder from '../images/favorite_border.png';
 import favorite from '../images/favorite.png';
+import share from '../images/share.png';
 
 import numeral from 'numeral';
 
 class FilmDetail extends React.Component {
-
     state = {
         film: undefined,
         isLoading: true,
@@ -38,6 +38,11 @@ class FilmDetail extends React.Component {
             />
         )
     }
+    shareFilm = () => {
+        const { film } = this.state;
+        Share.share({ title: film.title, message: film.overview})
+    }
+
     render() {
         const { isLoading, film } = this.state;
         const { toggleFavorite } = this.props;
@@ -127,6 +132,21 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
+    share_touchable_floatingactionbutton: {
+        position: 'absolute',
+        width: 60,
+        height: 60,
+        right: 30,
+        bottom: 30,
+        borderRadius: 30,
+        backgroundColor: '#e91e63',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    share_image: {
+        width: 30,
+        height: 30,
+    }
 });
 
 export default FilmDetail;

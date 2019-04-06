@@ -7,8 +7,8 @@ import { StyleSheet, View, Button, TextInput, FlatList, Text, ActivityIndicator 
 /**
  * Local Import
  */
-import films from '../Helpers/filmData';
-import FilmItem from './FilmItem';
+// import films from '../Helpers/filmData';
+import FilmList from '../Containers/FilmList';
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi';
 
 class Search extends React.Component {
@@ -56,27 +56,19 @@ class Search extends React.Component {
     render() {
         console.log(this.state.isLoading);
         const { films, isLoading, page, totalPages } = this.state;
-        const { favoritesFilm } = this.props;
+        const { navigation } = this.props;
+        console.log(navigation);
         return (
             <View style={styles.main_container}>
                 <TextInput style={ styles.textInput } placeholder="Titre de film" onChangeText={this.searchTextInputChanged} onSubmitEditing={this.searchFilms} />
                 <Button style={{ height: 50 }} title="Rechercher" onPress={this.searchFilms} />
-                <FlatList
-                    data={films}
-                    keyExtractor={(item) => item.id.toString()}
-                    onEndReachThreashold={0.5}
-                    onEndReached={() => {
-                        if ( page < totalPages ) {
-                            this.loadFilms()
-                        }
-                    }}
-                    renderItem={({ item }) => 
-                        <FilmItem 
-                            film={item} 
-                            displayDetailForFilm={this.displayDetailForFilm} 
-                            isFilmFavorite={(favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
-                        /> 
-                    }
+                <FilmList 
+                    films={films}
+                    navigation={navigation}
+                    loadFilms={this.loadFilms}
+                    page={page}
+                    totalPages={totalPages}
+                    favoriteList={false} // Ici j'ai simplement ajouté un booléen à false pour indiquer qu'on n'est pas dans le cas de l'affichage de la liste des films favoris. Et ainsi pouvoir déclencher le chargement de plus de films lorsque l'utilisateur scrolle
                 />
                 {isLoading && (
                     <View style={styles.loading_container}>

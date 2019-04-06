@@ -1,21 +1,97 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
+import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
+
+import numeral from 'numeral';
 
 class FilmDetail extends React.Component {
+
+    state = {
+        film: undefined,
+        isLoading: true,
+    }
+    componentDidMount() {
+        getFilmDetailFromApi(this.props.navigation.state.params.id).then(data => {
+          this.setState({
+            film: data,
+            isLoading: false
+          })
+        })
+    }
     render() {
-        const id = this.props.navigation.state.params.id;
-        return (
-            <View style={styles.main_container}>
-                <Text>Detail du film { id } </Text>
-            </View>
-        )
+        const { isLoading, film } = this.state;
+        console.log(film);
+        if (film != undefined) {
+            return (
+                <ScrollView style={styles.main_container}>
+                    {console.log(film.backdrop_path)}
+                    <Image
+                        style={styles.image}
+                        source={{ uri: getImageFromApi(film.backdrop_path) }}
+                    />
+                    <Text style={styles.title_text}>{film.title}</Text>
+                    <Text style={styles.description_text}>{film.overview}</Text>
+                    <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
+                    <Text style={styles.default_text}>Nombre de votes : {film.vote_count}</Text>
+                    <Text style={styles.default_text}>Budget : {numeral(film.budget).format('0,0[.]00 $')}</Text>
+                    <Text style={styles.default_text}>Genre(s) : 
+                        {film.genres.map(genre => (genre.name)).join(" / ")}
+                    </Text>
+                    <Text style={styles.default_text}>Genre(s) : 
+                        {film.production_companies.map(company => (company.name)).join(" / ")}
+                    </Text>
+                    {isLoading && (
+                        <View style={styles.loading_container}>
+                           <ActivityIndicator size='large' />
+                        </View>
+                    )}
+                </ScrollView>
+            )
+        }
+        return null;
     }
 }
 
 const styles = StyleSheet.create({
     main_container: {
         flex: 1,
-    }
+    },
+    image: {
+        height: 169,
+        margin: 5
+    },
+    loading_container: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 100,
+        bottom : 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title_text: {
+        fontWeight: 'bold',
+        fontSize: 35,
+        flex: 1,
+        flexWrap: 'wrap',
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 10,
+        marginBottom: 10,
+        color: '#000000',
+        textAlign: 'center'
+    },
+    description_text: {
+        fontStyle: 'italic',
+        color: '#666666',
+        margin: 5,
+        marginBottom: 15
+    },
+    default_text: {
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 5,
+    },
 });
 
 export default FilmDetail;

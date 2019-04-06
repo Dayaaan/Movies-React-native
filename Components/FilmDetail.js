@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
-import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi'
+import { StyleSheet, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi';
+import favoriteBorder from '../images/favorite_border.png';
+import favorite from '../images/favorite.png';
 
 import numeral from 'numeral';
 
@@ -18,9 +20,29 @@ class FilmDetail extends React.Component {
           })
         })
     }
+    componentDidUpdate() {
+        console.log(this.props.favoritesFilm);
+    }
+
+    displayFavoriteImage = () => {
+        let sourceImage = favoriteBorder;
+        const { film } = this.state;
+        const { favoritesFilm } =  this.props;
+        if (favoritesFilm.findIndex( item => item.id === film.id ) !== -1 ) {
+          sourceImage = favorite;
+        }
+        return (
+            <Image 
+                source={sourceImage}
+                style={styles.favorite_image}
+            />
+        )
+    }
     render() {
         const { isLoading, film } = this.state;
+        const { toggleFavorite } = this.props;
         console.log(film);
+        console.log(this.props);
         if (film != undefined) {
             return (
                 <ScrollView style={styles.main_container}>
@@ -30,6 +52,12 @@ class FilmDetail extends React.Component {
                         source={{ uri: getImageFromApi(film.backdrop_path) }}
                     />
                     <Text style={styles.title_text}>{film.title}</Text>
+                    <TouchableOpacity
+                        style={styles.favorite_container} 
+                        onPress={() => toggleFavorite(film)}
+                    >
+                        {this.displayFavoriteImage()}
+                    </TouchableOpacity>
                     <Text style={styles.description_text}>{film.overview}</Text>
                     <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
                     <Text style={styles.default_text}>Nombre de votes : {film.vote_count}</Text>
@@ -91,6 +119,13 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
+    },
+    favorite_container: {
+        alignItems: 'center',
+    },
+    favorite_image: {
+        width: 40,
+        height: 40,
     },
 });
 

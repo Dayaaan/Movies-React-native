@@ -56,6 +56,7 @@ class Search extends React.Component {
     render() {
         console.log(this.state.isLoading);
         const { films, isLoading, page, totalPages } = this.state;
+        const { favoritesFilm } = this.props;
         return (
             <View style={styles.main_container}>
                 <TextInput style={ styles.textInput } placeholder="Titre de film" onChangeText={this.searchTextInputChanged} onSubmitEditing={this.searchFilms} />
@@ -69,7 +70,13 @@ class Search extends React.Component {
                             this.loadFilms()
                         }
                     }}
-                    renderItem={({ item }) => <FilmItem film={item} displayDetailForFilm={this.displayDetailForFilm} /> }
+                    renderItem={({ item }) => 
+                        <FilmItem 
+                            film={item} 
+                            displayDetailForFilm={this.displayDetailForFilm} 
+                            isFilmFavorite={(favoritesFilm.findIndex(film => film.id === item.id) !== -1) ? true : false}
+                        /> 
+                    }
                 />
                 {isLoading && (
                     <View style={styles.loading_container}>

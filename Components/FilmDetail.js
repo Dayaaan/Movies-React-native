@@ -4,6 +4,7 @@ import { getFilmDetailFromApi, getImageFromApi } from '../API/TMDBApi';
 import favoriteBorder from '../images/favorite_border.png';
 import favorite from '../images/favorite.png';
 import share from '../images/share.png';
+import EnLargeShrink from '../Animations/EnLargeShrink';
 
 import numeral from 'numeral';
 
@@ -26,16 +27,22 @@ class FilmDetail extends React.Component {
 
     displayFavoriteImage = () => {
         let sourceImage = favoriteBorder;
+        let shouldEnlarge = false;
         const { film } = this.state;
         const { favoritesFilm } =  this.props;
         if (favoritesFilm.findIndex( item => item.id === film.id ) !== -1 ) {
           sourceImage = favorite;
+          shouldEnlarge = true;
         }
         return (
-            <Image 
-                source={sourceImage}
-                style={styles.favorite_image}
-            />
+            <EnLargeShrink
+                shouldEnlarge={shouldEnlarge}
+            >
+                <Image 
+                    source={sourceImage}
+                    style={styles.favorite_image}
+                />
+            </EnLargeShrink>
         )
     }
     shareFilm = () => {
@@ -129,8 +136,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     favorite_image: {
-        width: 40,
-        height: 40,
+        flex: 1,
+        width: null,
+        height: null,
     },
     share_touchable_floatingactionbutton: {
         position: 'absolute',
